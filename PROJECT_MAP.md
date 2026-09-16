@@ -88,4 +88,19 @@ tests/e2e.py                  — Playwright checks, synthetic logos only
   Fix: attributes written only when they change; setLang ignores the current language (ui.js)
   Verified: e2e embed test passes with no page errors
   Regression test: tests/e2e.py › "embed: host receives variants via lv-use" + "no page errors"
+
+2026-09-16 — Original image oversized/cropped in the review compare stage
+  Root cause: .lv-stage canvas relied on `width:100%; height:100%; object-fit:contain` inside a CSS Grid
+  `place-items:center` parent to letterbox the original canvas. The inline <svg> layer self-corrects via its
+  own viewBox + default preserveAspectRatio regardless of the box it's given, so it always looked fine; the
+  <canvas> layer has no such self-correction and depends entirely on object-fit, which is not reliable for
+  <canvas> across engines — so on some large/non-square sources the original rendered stretched past its
+  frame while the vector stayed correctly contained
+  Fix: `.lv-layer` switched to flex centering; canvas/svg switched to `max-width:100%; max-height:100%;
+  width:auto; height:auto` — the standard aspect-ratio-preserving replaced-element pattern, which does not
+  depend on object-fit support at all (logo-vectorizer.css)
+  Verified: manually reproduced and fixed with a 4200×2400 synthetic source (tight-cropped to 1105×1105) —
+  canvas CSS box stayed within its layer box at the correct aspect ratio in both cases
+  Regression test: none yet — tests/e2e.py asserts fidelity % (pixel data) but never checks the compare
+  stage's rendered box size/ratio, so this class of bug is invisible to CI. See PLAN.md action P0-1.
 ```

@@ -1,6 +1,6 @@
 # logo-vectorize
 
-**[العربية](README.ar.md)** · English
+English · **[العربية ↓](#logo-vectorize-عربي)**
 
 [![test and deploy](https://github.com/Mulhamx4/logo-vectorize/actions/workflows/pages.yml/badge.svg)](https://github.com/Mulhamx4/logo-vectorize/actions/workflows/pages.yml)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
@@ -87,3 +87,96 @@ python tests/e2e.py
 GPL-2.0-or-later, because the tracer is [Potrace](https://potrace.sourceforge.net/), which is GPL. You may use, modify and host the tool freely; if you distribute a modified version, its source must be available under the same license.
 
 **This does not license any logo.** Only process logos you own or are permitted to use.
+
+---
+
+<div dir="rtl" id="logo-vectorize-عربي">
+
+# logo-vectorize (عربي)
+
+**[English ↑](#logo-vectorize)** · العربية
+
+أداة تحوّل الشعار النقطي بألوان مسطحة (PNG أو JPG أو WebP) إلى فيكتور نظيف بطبقات، وتطلع باقة شعار جاهزة: **SVG وPDF وEPS وPNG** بكل النسخ اللونية المفيدة.
+
+المستودع فيه نسختين:
+
+- **أداة ويب** في مجلد `site/`، ومنشورة على <https://mulhamx4.github.io/logo-vectorize/>. كل المعالجة داخل المتصفح، والشعار ما يطلع من جهاز المستخدم.
+- **مهارة Claude** في `SKILL.md` و`scripts/`، وهي النسخة الأصلية بـ Python اللي انبنت منها أداة الويب.
+
+## النسخ اللي تطلع
+
+| النسخة | متى تنعمل |
+| --- | --- |
+| بالألوان على الخلفية | لو الصورة الأصلية لها خلفية ثابتة |
+| بالألوان — شفاف | دائمًا |
+| للخلفيات الفاتحة | للشعارات الفاتحة المصممة على خلفية داكنة |
+| للخلفيات الداكنة | الأجزاء الداكنة تصير بيضاء |
+| أسود / أبيض بلون واحد | دائمًا، والأجزاء القريبة من لون الخلفية تنفرّغ عشان التفاصيل الداخلية تظل واضحة |
+
+النسخة المعاد تلوينها تنتخطى لو بتدمج طبقتين في لون واحد وتمسح تفاصيل (مثل أيقونة داكنة داخل قرص أبيض).
+
+## كيف تشتغل
+
+1. **الخلفية** — شفافة، أو لون الوسيط لحدود الصورة.
+2. **الباليت** — k-means على البكسلات *المسطحة* بس، عشان الحواف المموّهة (anti-aliased) ما تخترع ألوان وسيطة؛ ومرحلة ثانية تلقط الألوان النادرة مثل خطوط ذهبية رفيعة.
+3. **التكبير** — عشان يكون فيه مساحة كافية لـ potrace يرسم منحنيات ناعمة.
+4. **تصنيف واعٍ بالمزج** — كل بكسل يتحدد إما بلون واحد من الباليت أو مزيج من لونين، وينسب للأقرب. هذا يمنع حواف الكحلي/الأبيض من تُقرأ على إنها "ذهبي".
+5. **طبقات متراصّة** — الطبقة رقم *n* فيها لونها زائد كل الألوان اللي فوقها، عشان ما تصير فجوات شعرية بين الألوان.
+6. **تتبع** كل طبقة بـ potrace، وبعدين إعادة رسم النتيجة ومقارنتها بالأصل لقياس مدى التطابق.
+
+أداة الويب تعرض هذا التطابق كنسبة مئوية، مع فاصل تسحبه للمقارنة بين قبل وبعد وطبقة حمراء تبيّن الفروقات، وتقدر تعدّل الألوان والخلفية وتعبئة المساحات المحصورة قبل ما تعيد التتبع.
+
+## حدود المتصفح
+
+| | كمبيوتر | جوال |
+| --- | --- | --- |
+| دقة المعالجة | حتى 24 ميجابكسل | حتى 12 ميجابكسل (Safari آيفون يوقف عند حوالي 16.7 ميجابكسل) |
+| حجم الملف | 25 م.ب | 25 م.ب |
+| الوقت المعتاد | 1–4 ث | 3–10 ث |
+
+ملفات الفيكتور (SVG وPDF وAI وEPS) ترفضها الأداة مع ذكر السبب، لأن تتبع ملف فيكتور أصلًا يقلل جودته بس.
+
+## استخدام أداة الويب في مكان ثاني
+
+الأداة عبارة عن وحدات ES عادية بدون أي خطوة بناء (build). تقدر تضمّنها كعنصر HTML، أو تركّب الواجهة بنفسك، أو تستدعي المحرك مباشرة — راجع **[INTEGRATION.md](INTEGRATION.md)** لتفاصيل الدمج في Brand Kit Builder (React + Vite) وصفحة دمج الخطوط العربية.
+
+```html
+<script type="module" src="/logo-vectorize/lib/logo-vectorizer.js"></script>
+<logo-vectorizer lang="ar" host-action-label="أضف إلى الهوية"></logo-vectorizer>
+```
+
+## استخدام المهارة (skill)
+
+```bash
+bash scripts/setup.sh
+python3 scripts/vectorize_logo.py logo.png --out build/out --name brand --display-name "Brand" --lang ar
+```
+
+لاستخدامها كمهارة Claude، اضغط محتوى المستودع بصيغة zip (بدون `site/` و`tests/`) وارفعه كمهارة.
+
+## التطوير
+
+```bash
+cd site && python3 -m http.server 8000   # أي خادم ملفات ثابتة؛ الـ module workers تحتاج http مو file://
+pip install playwright && python -m playwright install chromium
+python tests/e2e.py
+```
+
+`worker.js` نسخة مطابقة لـ `scripts/vectorize_logo.py`، لازم تتعدّل النسختين مع بعض.
+
+## الاعتماديات (مضمّنة في `site/lib/vendor/`)
+
+| الحزمة | الإصدار | دورها | الترخيص |
+| --- | --- | --- | --- |
+| esm-potrace-wasm | 0.5.1 | محرك potrace مترجم لـ WebAssembly | GPL-2.0 |
+| jsPDF | 4.2.1 | إنشاء ملف PDF | MIT |
+| svg2pdf.js | 2.8.1 | تحويل SVG إلى مسارات فيكتور داخل PDF | MIT |
+| fflate | 0.8.3 | ضغط ZIP | MIT |
+
+## الترخيص
+
+GPL-2.0-or-later، لأن محرك التتبع [Potrace](https://potrace.sourceforge.net/) مرخّص كذا. تقدر تستخدم الأداة وتعدّلها وتستضيفها بحرية، ولو وزّعت نسخة معدّلة لازم يكون كودها متاح بنفس الترخيص.
+
+**هذا الترخيص ما يشمل أي شعار.** استخدم الأداة فقط مع شعارات تملكها أو عندك إذن باستخدامها.
+
+</div>
