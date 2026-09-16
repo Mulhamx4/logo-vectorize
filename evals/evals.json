@@ -1,0 +1,8 @@
+{
+  "skill_name": "logo-vectorize",
+  "evals": [
+    {"id": 1, "prompt": "حولها لفيكتور وعطني كم صيغة لها و خلني أعاينها كملت html", "expected_output": "Two-color white+gold logo on navy traced; gold accents detected; 5 variants; zip + preview page; caveat about small Latin text", "files": ["navy-gold-wordmark.png"]},
+    {"id": 2, "prompt": "I need this logo as SVG and EPS for the printer, transparent background please", "expected_output": "3-color transparent PNG traced; mono variants keep the white disc knocked out so the triangle stays visible; no recolor variant that erases detail", "files": ["peak-transparent.png"]},
+    {"id": 3, "prompt": "أبغى الشعار بكل الصيغ، الصورة جودتها ضعيفة", "expected_output": "Low-quality JPG on white traced cleanly; orange+black detected; dark-background variant; mention the white 'b' is a hole unless --fill-enclosed", "files": ["bloom.jpg"]}
+  ]
+}

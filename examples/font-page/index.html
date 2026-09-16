@@ -1,0 +1,9 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>font page mock</title></head><body>
+<h1>دمج الخطوط</h1>
+<details id="lv-section"><summary>حوّل شعار لفيكتور</summary>
+<logo-vectorizer lang="ar"></logo-vectorizer></details>
+<script type="module">
+  const section = document.getElementById('lv-section');
+  section.addEventListener('toggle', () => { if (section.open) import('/logo-vectorize/lib/logo-vectorizer.js'); }, { once: true });
+  addEventListener('lv-result', e => document.title = 'result:' + e.detail.colors.length);
+</script></body></html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحويل الشعار لفيكتور</title>
+<meta name="description" content="حوّل شعار PNG أو JPG إلى فيكتور SVG وPDF وEPS داخل المتصفح. Convert a raster logo to vector SVG, PDF and EPS in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 26C6 14 14 6 26 6' fill='none' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='6' cy='26' r='3.5'/%3E%3Ccircle cx='26' cy='6' r='3.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/logo-vectorizer.css">
+<link rel="modulepreload" href="lib/ui.js">
+<style>
+  html { background: #F3F3F5; }
+  html[data-theme="dark"] { background: #0F0F12; }
+  @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) { background: #0F0F12; } }
+  body { margin: 0; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 20px 20px 40px; min-height: 100vh; display: flex; flex-direction: column; background: var(--lv-paper); }
+  .page > header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 28px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .brand svg { width: 22px; height: 22px; }
+  .intro { max-width: 60ch; margin-bottom: 28px; }
+  .intro h1 { font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 600; letter-spacing: -.01em; line-height: 1.2; margin: 0 0 10px; }
+  .intro p { color: var(--lv-ink-2); }
+  #tool { flex: 1; }
+  .page > footer { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; padding-top: 40px; font-size: .82rem; color: var(--lv-ink-3); }
+  .page > footer a { color: inherit; }
+</style>
+</head>
+<body class="lv">
+<div class="page">
+  <header>
+    <span class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26C6 14 14 6 26 6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="6" cy="26" r="3.5" fill="currentColor"/><circle cx="26" cy="6" r="3.5" fill="currentColor"/></svg><span>logo-vectorize</span></span>
+    <nav class="lv-row">
+      <button id="lang" class="lv-btn lv-btn-quiet" type="button"></button>
+      <button id="theme" class="lv-btn lv-btn-quiet" type="button"></button>
+    </nav>
+  </header>
+  <section class="intro"><h1 id="title"></h1><p id="tagline"></p></section>
+  <main id="tool"></main>
+  <footer><span id="footer-text"></span><span><span id="other"></span> <a id="font-tool" href="/arabic-font-merge/"></a> · <a id="source" href="https://github.com/Mulhamx4/logo-vectorize"></a></span></footer>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

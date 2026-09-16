@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="__LANG__" dir="__DIR__">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F2F2F4;--surface:#FFFFFF;--ink:#1B1C22;--muted:#63646F;--line:#DCDCE3;--accent:#3A3D52}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#15161B;--surface:#1E2027;--ink:#EDEDF2;--muted:#A2A4B3;--line:#30323C;--accent:#C9CBD8}}
+:root[data-theme="dark"]{--paper:#15161B;--surface:#1E2027;--ink:#EDEDF2;--muted:#A2A4B3;--line:#30323C;--accent:#C9CBD8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Readex Pro",Tahoma,"Segoe UI",system-ui,sans-serif;font-weight:300;line-height:1.7}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 64px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-size:1.35rem;font-weight:600;margin:0}
+header p{margin:0;color:var(--muted);font-size:.92rem}
+h2{font-size:1.05rem;font-weight:600;margin:48px 0 6px}
+.lead{color:var(--muted);margin:0 0 18px;font-size:.92rem;max-width:62ch}
+svg.logo{display:block;width:100%;height:auto}
+.checker{background-color:#fff;background-image:linear-gradient(45deg,#dcdcdc 25%,transparent 25%),linear-gradient(-45deg,#dcdcdc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dcdcdc 75%),linear-gradient(-45deg,transparent 75%,#dcdcdc 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0}
+.stage{border-radius:6px;overflow:hidden;border:1px solid var(--line);min-height:min(56vw,460px);display:grid;place-items:center;transition:background-color .35s}
+.holder{width:var(--size,70%)}
+.controls{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+.group{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.group>span{color:var(--muted);font-size:.85rem;min-width:72px}
+button{font:inherit;font-size:.86rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sw{width:28px;height:28px;padding:0;border-radius:50%;border:1px solid rgba(128,128,128,.4)}
+.sw[aria-pressed="true"]{background-color:inherit;box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--accent)}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:140px;max-width:420px}
+output{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+figure .tile{aspect-ratio:16/9;display:grid;place-items:center;padding:9%}
+figure .tile>div{width:100%}
+figcaption{padding:10px 14px 12px;font-size:.88rem}
+figcaption b{font-weight:600;display:block}
+figcaption small{color:var(--muted);direction:ltr;display:block;font-size:.74rem;word-break:break-all}
+[dir=rtl] figcaption small{text-align:right}
+.sizes{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap;border:1px solid var(--line);border-radius:6px;padding:24px}
+.sizes>div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.75rem}
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.chip{display:flex;align-items:center;gap:12px;border-radius:6px;padding:10px;width:100%;text-align:start}
+.chip i{width:42px;height:42px;border-radius:4px;flex:none;border:1px solid rgba(128,128,128,.25)}
+.chip span{display:flex;flex-direction:column;line-height:1.35}
+.chip code{direction:ltr;font-size:.8rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
+th,td{padding:10px 14px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600}
+tr:last-child td{border-bottom:0}
+td code{direction:ltr;display:inline-block;color:var(--muted);font-size:.8rem}
+.notes{margin:14px 0 0;padding:0 1.2em;color:var(--muted);font-size:.85rem;max-width:75ch}
+.toast{position:fixed;inset-inline:0;bottom:22px;margin:auto;width:max-content;background:var(--ink);color:var(--paper);padding:6px 16px;border-radius:999px;font-size:.85rem;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+__DEFS__
+</defs></svg>
+<div class="wrap">
+<header><h1 id="h1"></h1><p id="sub"></p></header>
+<div class="stage" id="stage"><div class="holder" id="holder"></div></div>
+<div class="controls">
+  <div class="group" role="group" id="vbtns"><span id="lv"></span></div>
+  <div class="group" role="group" id="bbtns"><span id="lb"></span></div>
+  <div class="group"><span id="ls"></span><input type="range" id="size" min="6" max="100" value="70"><output id="sizeOut">70%</output></div>
+</div>
+<h2 id="hv"></h2><p class="lead" id="pv"></p><div class="grid" id="grid"></div>
+<h2 id="hs"></h2><p class="lead" id="ps"></p><div class="sizes" id="sizes"></div>
+<h2 id="hc"></h2><p class="lead" id="pc"></p><div class="palette" id="palette"></div>
+<h2 id="hf"></h2>
+<div class="tablewrap"><table><thead><tr><th id="tf"></th><th id="tw"></th><th id="tp"></th></tr></thead><tbody id="tbody"></tbody></table></div>
+<ul class="notes" id="notes"></ul>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const D=__DATA__, T=D.t, $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const logo=v=>`<svg class="logo" viewBox="0 0 ${D.W} ${D.H}" role="img" aria-label="${esc(D.name)}">${v.fills.map((f,i)=>f?`<use href="#L${i}" fill="${f}"/>`:'').join('')}</svg>`;
+$('h1').textContent=T.title.replace('{name}',D.name);
+$('sub').textContent=T.sub.replace('{nv}',D.variants.length);
+[['lv','variant'],['lb','background'],['ls','size'],['hv','variants'],['pv','variants_lead'],['hs','small'],['ps','small_lead'],['hc','colors'],['pc','colors_lead'],['hf','files'],['tf','fmt'],['tw','when'],['tp','path']].forEach(([id,k])=>$(id).textContent=T[k]);
+const stage=$('stage'),holder=$('holder');
+function setBg(c){stage.classList.toggle('checker',c==='checker');stage.style.backgroundColor=c==='checker'?'':c;
+  document.querySelectorAll('[data-bg]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.bg===c))}
+const main=D.variants.filter(v=>!v.bg);
+function setV(i){holder.innerHTML=logo(main[i]);document.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===i));setBg(main[i].preview)}
+main.forEach((v,i)=>{const b=document.createElement('button');b.dataset.v=i;b.textContent=v.name;b.onclick=()=>setV(i);$('vbtns').append(b)});
+[...D.swatches,'checker'].forEach(c=>{const b=document.createElement('button');b.className='sw'+(c==='checker'?' checker':'');b.dataset.bg=c;if(c!=='checker')b.style.background=c;b.setAttribute('aria-label',c==='checker'?T.transparent:c);b.onclick=()=>setBg(c);$('bbtns').append(b)});
+$('size').oninput=e=>{holder.style.setProperty('--size',e.target.value+'%');$('sizeOut').textContent=e.target.value+'%'};
+setV(0);
+D.variants.forEach(v=>$('grid').insertAdjacentHTML('beforeend',`<figure><div class="tile" style="background:${v.bg||v.preview}"><div>${logo(v)}</div></div><figcaption><b>${esc(v.name)}</b><small>${esc(D.slug)}-${v.id}</small></figcaption></figure>`));
+const sv=main.find(v=>v.preview==='#FFFFFF')||main[0];
+$('sizes').style.background=sv.preview;
+[400,240,160,120,80,48].forEach(w=>$('sizes').insertAdjacentHTML('beforeend',`<div style="color:${sv.preview==='#FFFFFF'?'#555':'#ccc'}"><div style="width:${w}px">${logo(sv)}</div>${w}px</div>`));
+D.palette.forEach(p=>$('palette').insertAdjacentHTML('beforeend',`<button class="chip" data-copy="${p.hex}"><i style="background:${p.hex}"></i><span><bdi dir="ltr">${p.hex}</bdi><code>RGB ${p.rgb}</code></span></button>`));
+[['SVG',T.svg,'SVG/*.svg'],['PDF',T.pdf,'PDF/*.pdf'],['EPS',T.eps,'EPS/*.eps'],['PNG',T.png,D.pngw.map(w=>`PNG/*-${w}px.png`).join('<br>')]]
+ .forEach(r=>$('tbody').insertAdjacentHTML('beforeend',`<tr><td>${r[0]}</td><td>${r[1]}</td><td><code>${r[2]}</code></td></tr>`));
+D.notes.forEach(n=>$('notes').insertAdjacentHTML('beforeend',`<li>${esc(n)}</li>`));
+let tt;document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{const c=b.dataset.copy;let ok=true;try{await navigator.clipboard.writeText(c)}catch(e){ok=false}
+ $('toast').textContent=ok?`${T.copied} ${c}`:c;$('toast').classList.add('on');clearTimeout(tt);tt=setTimeout(()=>$('toast').classList.remove('on'),1600)});
+</script>
+</body>
+</html>

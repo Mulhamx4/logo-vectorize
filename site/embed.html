@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>logo-vectorize — embed example</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #fafafa; }
+  .host { max-width: 980px; margin: 32px auto; padding: 0 20px; }
+  /* a host restyling the tool through tokens only */
+  logo-vectorizer { --lv-font: system-ui, sans-serif; --lv-radius: 4px; }
+  #received { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+  #received figure { margin: 0; width: 160px; padding: 10px; background: #fff; border: 1px solid #ddd; }
+  #received svg { width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="host">
+  <h1>Host app</h1>
+  <p>This page embeds the tool as a custom element and receives the chosen variants.</p>
+  <logo-vectorizer lang="en" host-action-label="Add to brand kit"></logo-vectorizer>
+  <div id="received" aria-live="polite"></div>
+</div>
+<script type="module">
+  import './lib/logo-vectorizer.js';
+  document.querySelector('logo-vectorizer').addEventListener('lv-use', e => {
+    const box = document.getElementById('received'); box.replaceChildren();
+    for (const v of e.detail.variants) {
+      const f = document.createElement('figure'); f.innerHTML = v.svg; f.append(v.label); box.append(f);
+    }
+    document.title = 'received:' + e.detail.variants.length;
+  });
+</script>
+</body>
+</html>
