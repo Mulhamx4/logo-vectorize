@@ -51,7 +51,7 @@ export async function checkFile(file) {
 /**
  * Trace a raster logo.
  * @param {Blob} file
- * @param {{background?:'auto'|'transparent'|string, colors?:string[], fillEnclosed?:boolean, maxColors?:number}} options
+ * @param {{background?:'auto'|'transparent'|string, colors?:string[], fillEnclosed?:boolean, corners?:'sharp'|'balanced'|'smooth', maxColors?:number}} options
  * @param {(step:string, pct:number)=>void} onProgress
  */
 export function vectorize(file, options = {}, onProgress) {

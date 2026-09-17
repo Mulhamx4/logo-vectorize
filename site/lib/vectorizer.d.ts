@@ -2,7 +2,8 @@
 export type VariantId = 'color-on-background' | 'color-transparent' | 'color-for-light-backgrounds' | 'color-for-dark-backgrounds' | 'mono-black' | 'mono-white';
 export interface Variant { id: VariantId; fills?: string[]; mono?: string; bg?: string; preview: string; padded?: boolean }
 export interface TraceWarning { code: 'fewFlat' | 'tooManyColors' | 'unexplained' | 'smallSource' | 'smallParts' | 'lowFidelity'; [k: string]: unknown }
-export interface TraceOptions { background?: 'auto' | 'transparent' | string; colors?: string[] | null; fillEnclosed?: boolean; maxColors?: number }
+export type CornerStyle = 'sharp' | 'balanced' | 'smooth';
+export interface TraceOptions { background?: 'auto' | 'transparent' | string; colors?: string[] | null; fillEnclosed?: boolean; corners?: CornerStyle; maxColors?: number }
 export interface TraceResult {
   source: { width: number; height: number; name: string };
   crop: [number, number, number, number]; width: number; height: number; scale: number; W: number; H: number; transform: string;

@@ -7,7 +7,7 @@ const qs = new URLSearchParams(location.search).get('lang');
 let lang = ['ar', 'en'].includes(qs) ? qs : store.get('lv-lang') || 'ar';
 const theme = store.get('lv-theme'); if (theme) html.dataset.theme = theme;
 
-const app = mount(document.getElementById('tool'), { lang });
+const app = mount(document.getElementById('tool'), { lang, persist: true });
 const $ = id => document.getElementById(id);
 
 function paintChrome() {

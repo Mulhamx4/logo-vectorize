@@ -1,4 +1,5 @@
-// <logo-vectorizer lang="ar" host-action-label="أضف إلى الهوية"></logo-vectorizer>
+// <logo-vectorizer lang="ar" host-action-label="أضف إلى الهوية" persist></logo-vectorizer>
+// `persist` (opt-in) keeps the last batch in this browser's IndexedDB for 24 hours so the user can resume.
 // Events: `lv-result` (detail: trace result), `lv-use` (detail: { name, colors, background, variants:[{id,label,svg}] }).
 import { mount } from './ui.js';
 
@@ -13,7 +14,7 @@ class LogoVectorizer extends HTMLElement {
   connectedCallback() {
     ensureStyles();
     if (this._app) return;
-    this._app = mount(this, { lang: this.getAttribute('lang') || document.documentElement.lang || 'ar', hostActionLabel: this.getAttribute('host-action-label') || undefined });
+    this._app = mount(this, { lang: this.getAttribute('lang') || document.documentElement.lang || 'ar', hostActionLabel: this.getAttribute('host-action-label') || undefined, persist: this.hasAttribute('persist') });
   }
   disconnectedCallback() { this._app?.destroy(); this._app = null; }
   attributeChangedCallback(name, _, value) { if (name === 'lang') this._app?.setLang(value); }

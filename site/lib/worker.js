@@ -201,11 +201,15 @@ function enclosedMask(lab, W, H, bgLabel) {
 }
 
 let mask;                                                   // reused ImageData buffer
-async function trace(W, H, test, turd) {
+// corner style → potrace [alphamax, opttolerance]: lower alphamax keeps more corners, higher opttolerance merges more curves
+const CORNERS = { sharp: [0.6, 0.2], balanced: [1, 0.4], smooth: [1.25, 0.8] };
+
+async function trace(W, H, test, turd, corners) {
   if (!mask || mask.width !== W || mask.height !== H) mask = new ImageData(W, H);
   const d = mask.data;
   for (let i = 0, p = 0; i < W * H; i++, p += 4) { const v = test(i) ? 0 : 255; d[p] = d[p + 1] = d[p + 2] = v; d[p + 3] = 255; }
-  const out = await potrace(mask, { turdsize: turd, turnpolicy: 4, alphamax: 1, opticurve: 1, opttolerance: 0.4, pathonly: true, extractcolors: false, posterizelevel: 1, posterizationalgorithm: 0 });
+  const [alphamax, opttolerance] = CORNERS[corners] || CORNERS.balanced;
+  const out = await potrace(mask, { turdsize: turd, turnpolicy: 4, alphamax, opticurve: 1, opttolerance, pathonly: true, extractcolors: false, posterizelevel: 1, posterizationalgorithm: 0 });
   return (Array.isArray(out) ? out.join(' ') : String(out)).replace(/\s+/g, ' ').trim();
 }
 
@@ -289,15 +293,16 @@ async function run(id, file, opt) {
 
   const inner = opt.fillEnclosed && bg ? enclosedMask(lab, W, H, 0) : null;
   const turd = Math.max(2, Math.floor(S * S * 0.4));
+  const corners = CORNERS[opt.corners] ? opt.corners : 'balanced';
   await init();
   const layers = [];
   for (let k = 0; k < n; k++) {
     step('trace', 45 + Math.round(40 * k / (n + 1)));
-    layers.push(await trace(W, H, i => rank[lab[i]] >= k || (k === 0 && inner && inner[i]), turd));
+    layers.push(await trace(W, H, i => rank[lab[i]] >= k || (k === 0 && inner && inner[i]), turd, corners));
   }
   let colors = fgSorted.map(hex);
   if (inner) {
-    layers.splice(1, 0, await trace(W, H, i => inner[i] && rank[lab[i]] < 0, turd));
+    layers.splice(1, 0, await trace(W, H, i => inner[i] && rank[lab[i]] < 0, turd, corners));
     colors.splice(1, 0, hex(bg)); areas.splice(1, 0, inner.reduce((a, v) => a + v, 0));
   }
 
@@ -308,7 +313,7 @@ async function run(id, file, opt) {
   fgSorted.forEach((c, k) => { if (contrast(lum(c)) >= 1.8) { ink[idx[k]] = 1; inkCount++; } });
   step('trace', 88);
   const monoKnockout = (inkCount > 0 && inkCount < n) || !!inner;
-  const monoPath = monoKnockout ? await trace(W, H, i => inkCount ? ink[lab[i]] === 1 : rank[lab[i]] >= 0, turd) : layers[0];
+  const monoPath = monoKnockout ? await trace(W, H, i => inkCount ? ink[lab[i]] === 1 : rank[lab[i]] >= 0, turd, corners) : layers[0];
 
   // small-detail check at source scale: count short connected parts of the logo
   let tiny = 0;
@@ -338,7 +343,7 @@ async function run(id, file, opt) {
     background: bg ? hex(bg) : null, colors, areas, layers, monoLayer: monoPath, monoKnockout,
     variants: makeVariants(colors, bg ? hex(bg) : null, areas),
     cropPixels, warnings: warn, ms: Math.round(performance.now() - t0),
-    options: { background: opt.background || 'auto', colors: opt.colors || null, fillEnclosed: !!opt.fillEnclosed },
+    options: { background: opt.background || 'auto', colors: opt.colors || null, fillEnclosed: !!opt.fillEnclosed, corners },
   };
 }
 
