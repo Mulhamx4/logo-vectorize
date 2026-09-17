@@ -136,7 +136,8 @@
 .lv .lv-color { display: flex; align-items: center; gap: 10px; }
 .lv .lv-color label { position: relative; width: 34px; height: 34px; border-radius: var(--lv-radius-sm); border: 1px solid rgba(128,128,128,.35); cursor: pointer; flex: none; overflow: hidden; }
 .lv .lv-color label input { position: absolute; inset: -8px; width: 50px; height: 50px; opacity: 0; cursor: pointer; }
-.lv .lv-color code { flex: 1; direction: ltr; text-align: start; font-family: inherit; font-size: .88rem; }
+.lv .lv-color code { flex: 1; direction: ltr; text-align: left; font-family: inherit; font-size: .88rem; }
+[dir="rtl"] .lv .lv-color code, .lv[dir="rtl"] .lv-color code { text-align: right; }   /* LTR hex sits next to its swatch in both directions */
 .lv .lv-seg { display: flex; flex-wrap: wrap; gap: 6px; }
 .lv .lv-hint { font-size: .8rem; color: var(--lv-ink-3); }
 .lv .lv-notice { font-size: .84rem; padding: 10px 12px; border-radius: var(--lv-radius-sm); background: var(--lv-sunken); color: var(--lv-ink-2); }
