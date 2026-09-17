@@ -38,6 +38,7 @@ python3 <skill>/scripts/vectorize_logo.py INPUT \
   - `--colors "#28357B,#FFFFFF"`: exact foreground colors (use the brand's official hex codes if the user gave them — better than sampled colors).
   - `--bg transparent|#hex`: when the background detection is wrong (e.g. the logo touches the image edge).
   - `--fill-enclosed`: background-colored areas fully enclosed by the logo become a solid fill instead of a hole (a white letter inside an orange box stays white on any background). It also fills letter counters (the inside of o, a, e), so only use it when that's desired or the logo has no such text.
+  - `--corners sharp|balanced|smooth` (default `balanced`): *sharp* keeps geometric corners crisp (angular marks, stencil letters); *smooth* rounds curves in round or hand-drawn logos. Same presets as the web tool's Corners setting.
   - `--max-colors N`, `--scale N`, `--no-crop`, `--png-widths 1000,4000`.
 
 It prints a JSON report: detected background and colors, variants created, `fidelity_percent`, `mono_knockout`, and warnings.

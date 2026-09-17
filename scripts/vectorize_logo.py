@@ -210,12 +210,17 @@ def classify(img, alpha_up, palette, has_bg):
 
 
 # ---------------------------------------------------------------- tracing
-def trace_mask(mask, tmp, name, turd):
+# corner style -> potrace (alphamax, opttolerance); same table as CORNERS in site/lib/worker.js
+CORNERS = {'sharp': (0.6, 0.2), 'balanced': (1.0, 0.4), 'smooth': (1.25, 0.8)}
+
+
+def trace_mask(mask, tmp, name, turd, corners='balanced'):
     bmp = os.path.join(tmp, name + '.bmp')
     svg = os.path.join(tmp, name + '.svg')
     Image.fromarray(np.where(mask, 0, 255).astype(np.uint8)).convert('1').save(bmp)
-    subprocess.run(['potrace', bmp, '-s', '-o', svg, '-t', str(turd), '-a', '1.0',
-                    '-O', '0.4', '--flat'], check=True)
+    alphamax, opttolerance = CORNERS[corners]
+    subprocess.run(['potrace', bmp, '-s', '-o', svg, '-t', str(turd), '-a', str(alphamax),
+                    '-O', str(opttolerance), '--flat'], check=True)
     s = open(svg).read()
     tr = re.search(r'<g transform="([^"]+)"', s)
     paths = re.findall(r'<path d="([^"]+)"', s, re.S)
@@ -343,6 +348,8 @@ def main():
     ap.add_argument('--scale', default='auto')
     ap.add_argument('--fill-enclosed', action='store_true',
                     help='regions of background color fully enclosed by the logo become a solid layer')
+    ap.add_argument('--corners', default='balanced', choices=list(CORNERS),
+                    help='sharp keeps geometric corners crisp; smooth rounds curves in round or hand-drawn logos')
     ap.add_argument('--no-crop', action='store_true')
     ap.add_argument('--png-widths', default='1000,4000')
     ap.add_argument('--lang', default='ar', choices=['ar', 'en'])
@@ -428,12 +435,12 @@ def main():
         mask = np.isin(labels, fg_idx[k:])
         if extra_inner is not None and k == 0:
             mask |= extra_inner
-        tr, d = trace_mask(mask, tmp, f'L{k}', turd)
+        tr, d = trace_mask(mask, tmp, f'L{k}', turd, a.corners)
         layers.append(dict(transform=tr, d=d))
     fg_hex = [rgb2hex(c) for c in fg]
     areas = [area[i] for i in order]
     if extra_inner is not None:
-        tr, d = trace_mask(extra_inner & ~np.isin(labels, fg_idx), tmp, 'inner', turd)
+        tr, d = trace_mask(extra_inner & ~np.isin(labels, fg_idx), tmp, 'inner', turd, a.corners)
         # inner fills sit right above the bottom layer
         layers.insert(1, dict(transform=tr, d=d))
         fg_hex.insert(1, rgb2hex(bg))
@@ -454,7 +461,7 @@ def main():
     union_mask = np.isin(labels, fg_idx)
     mono_mask = np.isin(labels, ink) if ink else union_mask
     if (ink and len(ink) < n) or extra_inner is not None:
-        tr, d = trace_mask(mono_mask, tmp, 'mono', turd)
+        tr, d = trace_mask(mono_mask, tmp, 'mono', turd, a.corners)
         mono_layer = dict(transform=tr, d=d)
     else:
         mono_layer = dict(layers[0])

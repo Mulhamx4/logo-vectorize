@@ -1,0 +1,27 @@
+{
+  "name": "logo-vectorizer",
+  "version": "1.1.0",
+  "description": "Turn a flat-color raster logo into layered vectors and a logo pack (SVG, PDF, EPS, PNG) entirely in the browser. Arabic and English UI.",
+  "type": "module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://mulhamx4.github.io/logo-vectorize/",
+  "repository": { "type": "git", "url": "git+https://github.com/Mulhamx4/logo-vectorize.git" },
+  "bugs": { "url": "https://github.com/Mulhamx4/logo-vectorize/issues" },
+  "keywords": ["logo", "vectorize", "vectorizer", "potrace", "svg", "trace", "raster-to-vector", "arabic", "rtl", "web-component"],
+  "files": ["site/lib/", "LICENSE", "INTEGRATION.md"],
+  "main": "./site/lib/vectorizer.js",
+  "types": "./site/lib/vectorizer.d.ts",
+  "exports": {
+    ".": { "types": "./site/lib/vectorizer.d.ts", "default": "./site/lib/vectorizer.js" },
+    "./ui": { "types": "./site/lib/ui.d.ts", "default": "./site/lib/ui.js" },
+    "./element": { "types": "./site/lib/logo-vectorizer.d.ts", "default": "./site/lib/logo-vectorizer.js" },
+    "./session": { "types": "./site/lib/session.d.ts", "default": "./site/lib/session.js" },
+    "./style.css": "./site/lib/logo-vectorizer.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": ["./site/lib/logo-vectorizer.js", "*.css"],
+  "scripts": {
+    "test": "python tests/e2e.py chromium",
+    "serve": "python -m http.server 8000 --directory site"
+  }
+}
