@@ -31,21 +31,37 @@ async function run(mode, op) {
   } finally { db.close(); }
 }
 
+// a batch this large is not worth holding in storage; it is simply not offered for resume
+export const MAX_SESSION_BYTES = 64 * 1024 * 1024;
+let generation = 0;   // bumped by clearSession so a save still reading files can't bring a cleared session back
+
 /** @param {{items:{file:Blob,name:string,options:object}[], active:number}} data */
 export async function saveSession(data) {
-  try { await run('readwrite', s => s.put({ ...data, savedAt: Date.now() }, KEY)); return true; } catch { return false; }
+  const gen = ++generation;
+  try {
+    if (data.items.reduce((n, it) => n + it.file.size, 0) > MAX_SESSION_BYTES) { await clearSession(); return false; }
+    // raw bytes, not Blobs: WebKit refuses Blobs in IndexedDB in private windows
+    const items = await Promise.all(data.items.map(async ({ file, ...rest }) => ({
+      ...rest, file: { bytes: await file.arrayBuffer(), type: file.type, fileName: file.name || 'logo', lastModified: file.lastModified || Date.now() },
+    })));
+    if (gen !== generation) return false;
+    await run('readwrite', s => s.put({ items, active: data.active, savedAt: Date.now() }, KEY));
+    return true;
+  } catch { return false; }
 }
 
 /** The saved batch, or null when there is none, it expired, or storage is unavailable. */
 export async function loadSession() {
   try {
     const v = await run('readonly', s => s.get(KEY));
-    if (!v?.items?.length) return null;
+    if (!v?.items?.length || !v.items.every(it => it.file?.bytes)) return null;
     if (Date.now() - v.savedAt > SESSION_TTL) { await clearSession(); return null; }
-    return v;
+    const items = v.items.map(({ file: f, ...rest }) => ({ ...rest, file: new File([f.bytes], f.fileName, { type: f.type, lastModified: f.lastModified }) }));
+    return { ...v, items };
   } catch { return null; }
 }
 
 export async function clearSession() {
+  generation++;
   try { await run('readwrite', s => s.delete(KEY)); } catch {}
 }

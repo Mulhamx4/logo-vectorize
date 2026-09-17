@@ -12,6 +12,14 @@ It ships in two forms:
 - **A web tool** — `site/`, deployed to <https://mulhamx4.github.io/logo-vectorize/>. Runs entirely in the browser; the logo never leaves the device.
 - **A Claude skill** — `SKILL.md` + `scripts/`, the Python original the web tool is ported from.
 
+## Features
+
+- **One logo or up to 20 at once.** Each keeps its own settings; a strip switches between them, and one ZIP holds a folder per logo.
+- **Review before you download:** a before/after divider, a red difference overlay, and the match with the original as a percentage.
+- **Adjust and trace again:** colors, background, filling enclosed areas, and corner style (sharp, balanced, rounded).
+- **Resume after a refresh.** The last batch stays in this browser for 24 hours; “New logo” clears it. Nothing is uploaded.
+- Arabic and English, light and dark, phone-width layout.
+
 ## What you get
 
 | Variant | When it is created |
@@ -33,7 +41,7 @@ A recolored variant is skipped when it would merge two layers into one color and
 5. **Stacked layers** — layer *n* is its color plus every color above it, so there are never hairline gaps between colors.
 6. **Trace** each layer with potrace, then render the result back and measure how closely it matches the original.
 
-The web tool shows that match as a percentage, with a before/after divider and a red difference overlay, and lets you edit colors, background and enclosed-area filling before tracing again.
+The web tool shows that match as a percentage, with a before/after divider and a red difference overlay, and lets you edit colors, background, enclosed-area filling and corner style before tracing again. Corner style sets potrace's `alphamax` and `opttolerance`: *sharp* keeps geometric corners crisp, *rounded* smooths round or hand-drawn marks.
 
 ## Browser limits
 
@@ -41,13 +49,16 @@ The web tool shows that match as a percentage, with a before/after divider and a
 | --- | --- | --- |
 | Working resolution | up to 24 MP | up to 12 MP (iOS Safari caps canvases near 16.7 MP) |
 | File size | 25 MB | 25 MB |
-| Typical time | 1–4 s | 3–10 s |
+| Typical time | 1–4 s per logo | 3–10 s per logo |
+| Logos per batch | 20 | 20 |
 
 Vector inputs (SVG, PDF, AI, EPS) are refused with a reason: tracing a vector only lowers its quality.
 
+Every change is tested in Chromium, Firefox and WebKit (Playwright, on Linux). Real iPhone, Android and desktop Firefox have not been checked yet.
+
 ## Use the web tool elsewhere
 
-The tool is a set of plain ES modules with no build step. Embed it as an element, mount the UI, or call the core directly — see **[INTEGRATION.md](INTEGRATION.md)** for Brand Kit Builder (React + Vite) and the Arabic font merge page.
+The tool is a set of plain ES modules with no build step. Embed it as an element, mount the UI, or call the core directly — see **[INTEGRATION.md](INTEGRATION.md)** for Brand Kit Builder (React + Vite) and the Arabic font merge page. `package.json` is ready for an npm package named `logo-vectorizer`. It is not published yet; until it is, copy `site/lib/`.
 
 ```html
 <script type="module" src="/logo-vectorize/lib/logo-vectorizer.js"></script>
@@ -67,9 +78,11 @@ For Claude, zip the repository contents (without `site/` and `tests/`) and uploa
 
 ```bash
 cd site && python3 -m http.server 8000   # any static server; module workers need http, not file://
-pip install playwright && python -m playwright install chromium
-python tests/e2e.py
+pip install playwright && python -m playwright install chromium firefox webkit
+python tests/e2e.py chromium             # or firefox / webkit
 ```
+
+The suite traces synthetic logos only. It checks colors, variants and exports; batch and resume; corner styles; that the original and the vector line up in the compare stage (tall, wide, large and phone-width sources); and WCAG 2.2 A/AA with axe-core.
 
 `worker.js` is a port of `scripts/vectorize_logo.py`. Change both together.
 
@@ -81,6 +94,7 @@ python tests/e2e.py
 | jsPDF | 4.2.1 | PDF document | MIT |
 | svg2pdf.js | 2.8.1 | SVG → vector PDF | MIT |
 | fflate | 0.8.3 | ZIP | MIT |
+| axe-core (tests only, `tests/vendor/`) | 4.13.0 | accessibility checks | MPL-2.0 |
 
 ## License
 
@@ -103,6 +117,14 @@ GPL-2.0-or-later, because the tracer is [Potrace](https://potrace.sourceforge.ne
 - **أداة ويب** في مجلد `site/`، ومنشورة على <https://mulhamx4.github.io/logo-vectorize/>. كل المعالجة داخل المتصفح، والشعار ما يطلع من جهاز المستخدم.
 - **مهارة Claude** في `SKILL.md` و`scripts/`، وهي النسخة الأصلية بـ Python اللي انبنت منها أداة الويب.
 
+## المزايا
+
+- **شعار واحد أو حتى 20 شعار بالمرة.** كل شعار له إعداداته، وتتنقل بينها من شريط أعلى المراجعة، وتحمّلها كلها في ZIP واحد فيه مجلد لكل شعار.
+- **راجع قبل التحميل:** فاصل للمقارنة بين الأصل والفيكتور، وطبقة حمراء للفروقات، ونسبة التطابق مع الأصل.
+- **عدّل وأعد التتبع:** الألوان، والخلفية، وتعبئة المساحات المحصورة، وشكل الزوايا (حادة، متوازنة، ناعمة).
+- **كمّل بعد تحديث الصفحة.** آخر مجموعة شعارات تبقى في متصفحك 24 ساعة، وزر «شعار جديد» يمسحها. ما يُرفع أي شي.
+- عربي وإنجليزي، فاتح وداكن، ومتجاوبة مع الجوال.
+
 ## النسخ اللي تطلع
 
 | النسخة | متى تنعمل |
@@ -124,7 +146,7 @@ GPL-2.0-or-later, because the tracer is [Potrace](https://potrace.sourceforge.ne
 5. **طبقات متراصّة** — الطبقة رقم *n* فيها لونها زائد كل الألوان اللي فوقها، عشان ما تصير فجوات شعرية بين الألوان.
 6. **تتبع** كل طبقة بـ potrace، وبعدين إعادة رسم النتيجة ومقارنتها بالأصل لقياس مدى التطابق.
 
-أداة الويب تعرض هذا التطابق كنسبة مئوية، مع فاصل تسحبه للمقارنة بين قبل وبعد وطبقة حمراء تبيّن الفروقات، وتقدر تعدّل الألوان والخلفية وتعبئة المساحات المحصورة قبل ما تعيد التتبع.
+أداة الويب تعرض هذا التطابق كنسبة مئوية، مع فاصل تسحبه للمقارنة بين قبل وبعد وطبقة حمراء تبيّن الفروقات، وتقدر تعدّل الألوان والخلفية وتعبئة المساحات المحصورة وشكل الزوايا قبل ما تعيد التتبع. شكل الزوايا يضبط `alphamax` و`opttolerance` في potrace: *الحادة* تحافظ على زوايا الأشكال الهندسية، و*الناعمة* تنعّم الشعارات الدائرية أو المرسومة باليد.
 
 ## حدود المتصفح
 
@@ -132,13 +154,16 @@ GPL-2.0-or-later, because the tracer is [Potrace](https://potrace.sourceforge.ne
 | --- | --- | --- |
 | دقة المعالجة | حتى 24 ميجابكسل | حتى 12 ميجابكسل (Safari آيفون يوقف عند حوالي 16.7 ميجابكسل) |
 | حجم الملف | 25 م.ب | 25 م.ب |
-| الوقت المعتاد | 1–4 ث | 3–10 ث |
+| الوقت المعتاد | 1–4 ث للشعار | 3–10 ث للشعار |
+| عدد الشعارات بالمرة | 20 | 20 |
 
 ملفات الفيكتور (SVG وPDF وAI وEPS) ترفضها الأداة مع ذكر السبب، لأن تتبع ملف فيكتور أصلًا يقلل جودته بس.
 
+كل تعديل يُختبر آليًا على Chromium وFirefox وWebKit (عبر Playwright على Linux). ما تم بعد اختبارها على آيفون أو أندرويد حقيقي، ولا على Firefox في كمبيوتر حقيقي.
+
 ## استخدام أداة الويب في مكان ثاني
 
-الأداة عبارة عن وحدات ES عادية بدون أي خطوة بناء (build). تقدر تضمّنها كعنصر HTML، أو تركّب الواجهة بنفسك، أو تستدعي المحرك مباشرة — راجع **[INTEGRATION.md](INTEGRATION.md)** لتفاصيل الدمج في Brand Kit Builder (React + Vite) وصفحة دمج الخطوط العربية.
+الأداة عبارة عن وحدات ES عادية بدون أي خطوة بناء (build). تقدر تضمّنها كعنصر HTML، أو تركّب الواجهة بنفسك، أو تستدعي المحرك مباشرة — راجع **[INTEGRATION.md](INTEGRATION.md)** لتفاصيل الدمج في Brand Kit Builder (React + Vite) وصفحة دمج الخطوط العربية. ملف `package.json` جاهز لحزمة npm باسم `logo-vectorizer`، لكنها ما انتشرت بعد؛ لين تنتشر انسخ مجلد `site/lib/`.
 
 ```html
 <script type="module" src="/logo-vectorize/lib/logo-vectorizer.js"></script>
@@ -158,9 +183,11 @@ python3 scripts/vectorize_logo.py logo.png --out build/out --name brand --displa
 
 ```bash
 cd site && python3 -m http.server 8000   # أي خادم ملفات ثابتة؛ الـ module workers تحتاج http مو file://
-pip install playwright && python -m playwright install chromium
-python tests/e2e.py
+pip install playwright && python -m playwright install chromium firefox webkit
+python tests/e2e.py chromium             # أو firefox / webkit
 ```
+
+الاختبارات تستخدم شعارات وهمية فقط، وتتحقق من: الألوان والنسخ والتصدير، والمعالجة الجماعية والاستكمال، وأشكال الزوايا، وتطابق الأصل مع الفيكتور في شاشة المقارنة (صور طويلة وعريضة وكبيرة وعلى عرض الجوال)، ومعايير الوصولية WCAG 2.2 A/AA عبر axe-core.
 
 `worker.js` نسخة مطابقة لـ `scripts/vectorize_logo.py`، لازم تتعدّل النسختين مع بعض.
 
@@ -172,6 +199,7 @@ python tests/e2e.py
 | jsPDF | 4.2.1 | إنشاء ملف PDF | MIT |
 | svg2pdf.js | 2.8.1 | تحويل SVG إلى مسارات فيكتور داخل PDF | MIT |
 | fflate | 0.8.3 | ضغط ZIP | MIT |
+| axe-core (للاختبارات فقط، `tests/vendor/`) | 4.13.0 | فحص الوصولية | MPL-2.0 |
 
 ## الترخيص
 

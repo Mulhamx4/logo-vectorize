@@ -9,11 +9,30 @@
 | `mount(root, options)` | تطبيق React/Vue يبي يتحكم باللغة ويستقبل النتيجة | `lib/ui.js` |
 | الدوال مباشرة | واجهة خاصة بالكامل | `lib/vectorizer.js` |
 
-الأنواع لـ TypeScript جاهزة بجانب كل ملف: `ui.d.ts`، `vectorizer.d.ts`.
+الأنواع لـ TypeScript جاهزة بجانب كل ملف: `ui.d.ts`، `vectorizer.d.ts`، `session.d.ts`.
+
+### من npm (جاهز، ما انتشر بعد)
+
+`package.json` في جذر المستودع يعرّف حزمة باسم `logo-vectorizer` تحتوي `site/lib/` فقط. تم اختبارها كحزمة مثبّتة داخل مشروع Vite 8.3 + React 19.3 + TypeScript 6.0.3: نجح `tsc --noEmit` و`vite build` وخادم التطوير، واشتغل تتبع عدة شعارات وتصدير PDF وزر المضيف.
+
+| المسار | المحتوى |
+| --- | --- |
+| `logo-vectorizer` | الدوال (`vectorize`, `buildFiles`, …) |
+| `logo-vectorizer/ui` | `mount` |
+| `logo-vectorizer/element` | عنصر `<logo-vectorizer>` |
+| `logo-vectorizer/session` | حفظ آخر مجموعة واسترجاعها |
+| `logo-vectorizer/style.css` | التنسيق |
+
+مع Vite لازم تستثني الحزمة من التجميع المسبق، وإلا ما يلقى خادم التطوير ملف الـ worker:
+
+```ts
+// vite.config.ts
+export default defineConfig({ plugins: [react()], optimizeDeps: { exclude: ['logo-vectorizer'] } });
+```
 
 ## القواعد الثابتة
 
-- **انسخ `site/lib/` كاملًا بدون تعديل.** التحديث = إعادة نسخ المجلد من المستودع. أي تعديل داخله يضيع مع أول تحديث.
+- **انسخ `site/lib/` كاملًا بدون تعديل** (أو ثبّت الحزمة بعد نشرها). التحديث = إعادة نسخ المجلد من المستودع. أي تعديل داخله يضيع مع أول تحديث.
 - **الـ Worker لازم يكون من نفس الـ origin.** المتصفح يمنع تشغيل worker من دومين ثاني. لهذا ما ينفع تستورد الأداة من CDN خارجي.
 - **ما تحتاج `file://`.** لازم خادم (حتى `python3 -m http.server`).
 - **الترخيص GPL** بسبب potrace. الاستخدام الداخلي والاستضافة بدون قيود. لو تحوّل المشروع المضيف لمنتج يتوزّع، لازم يكون متوافق مع GPL.
@@ -22,10 +41,22 @@
 
 | الحدث | متى | `detail` |
 | --- | --- | --- |
-| `lv-result` | بعد كل تتبع ناجح | نتيجة كاملة `TraceResult` |
-| `lv-use` | لما يضغط المستخدم زر المضيف (يظهر فقط لو حددت `host-action-label`) | `{ name, colors, background, fidelity, variants: [{ id, label, svg }] }` |
+| `lv-result` | بعد كل تتبع ناجح، **مرة لكل شعار** لما يرفع المستخدم عدة شعارات | نتيجة كاملة `TraceResult` |
+| `lv-use` | لما يضغط المستخدم زر المضيف (يظهر فقط لو حددت `host-action-label`) | الشعار المعروض حاليًا فقط: `{ name, colors, background, fidelity, variants: [{ id, label, svg }] }` |
 
 الأحداث تنطلق من عنصر الأداة وتصعد (`bubbles`).
+
+## الخيارات
+
+| الخيار | في `mount()` | في العنصر | الافتراضي | الأثر |
+| --- | --- | --- | --- | --- |
+| اللغة | `lang` | `lang` | `ar` | `ar` أو `en`، وتتبدل مباشرة |
+| زر المضيف | `hostActionLabel` | `host-action-label` | بدون | يظهر زر يطلق `lv-use` |
+| الاستكمال | `persist: true` | `persist` | مطفأ | يحفظ آخر مجموعة شعارات (الملفات الأصلية + الإعدادات المطبّقة) في IndexedDB على نفس الجهاز لمدة 24 ساعة، ويعرض «كمّل من حيث وقفت» بعد التحديث. «شعار جديد» يمسحها. المجموعات فوق 64 م.ب ما تنحفظ. |
+
+- **عدد الشعارات بالمرة:** حتى 20 (`MAX_BATCH` من `ui.js`). كل شعار له إعداداته، وزر «حمّل كل الشعارات» يطلع ZIP فيه مجلد لكل شعار.
+- **الاستكمال مطفأ في العنصر افتراضيًا** لأن المضيف غالبًا عنده تخزينه الخاص. الصفحة المستقلة (`site/app.js`) تفعّله.
+- **شكل الزوايا:** خيار `corners` في `vectorize()` بقيم `sharp` و`balanced` (الافتراضي) و`smooth`، ويظهر في لوحة الإعدادات للمستخدم.
 
 ## التنسيق
 
@@ -90,6 +121,9 @@ Vite يتعامل مع كل شي تلقائيًا: الـ worker، ملفات js
 
 **5. نقاط للمراجعة داخل Brand Kit**
 
+- لا تفعّل `persist` داخل Brand Kit إلا لو قررت إن الشعارات الأصلية تنحفظ في المتصفح؛ Brand Kit عنده مسار تخزينه الخاص.
+- مع الحزمة من npm استورد `logo-vectorizer/ui` و`logo-vectorizer/style.css` بدل المسارات المحلية، وأضف `optimizeDeps.exclude`.
+
 - واجهة الأداة ثنائية اللغة وتتبع `lang`. مرّر لغة التطبيق وحدّثها مع كل تبديل (المكوّن يسويها).
 - اربط `--lv-*` بتوكنز `docs/05-DESIGN-SYSTEM.md`.
 - الأداة تستمع لحدث `paste` على `document` بس وهي في مرحلة الرفع. لو عند Brand Kit لصق عام، اعرض الأداة داخل لوحة أو نافذة مستقلة.
@@ -103,7 +137,7 @@ import { checkFile, vectorize, buildFiles, zip, download } from './lib/vectorize
 
 const problem = await checkFile(file);            // null أو { code }
 if (problem) throw problem;
-const result = await vectorize(file, { background: 'auto' }, (step, pct) => {});
+const result = await vectorize(file, { background: 'auto', corners: 'balanced' }, (step, pct) => {});
 const files = await buildFiles(result, { name: 'brand', formats: ['svg', 'pdf'] });
 download(zip(files), 'brand-logo.zip');
 ```
