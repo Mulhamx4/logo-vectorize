@@ -1,6 +1,6 @@
 # خطة التحسين والتطوير — logo-vectorize
 
-آخر تحديث: 2026-09-17
+آخر تحديث: 2026-09-17 (بعد نشر npm)
 
 خطة مبنية على وضع المشروع الفعلي (راجع [PROJECT_MAP.md](PROJECT_MAP.md) للتفاصيل)، مرتبة حسب الأولوية. كل بند فيه المشكلة، وليش يستاهل، وحجم الجهد (S/M/L)، وحالته.
 
@@ -15,7 +15,7 @@
 | P1-2 | الاستكمال بعد تحديث الصفحة | ✅ منفّذ — [#1](https://github.com/Mulhamx4/logo-vectorize/pull/1) |
 | P1-3 | فحص الوصولية WCAG | ✅ منفّذ — [#1](https://github.com/Mulhamx4/logo-vectorize/pull/1) |
 | P1-4 | إصدارات GitHub Actions على Node 24 | ✅ منفّذ — [#1](https://github.com/Mulhamx4/logo-vectorize/pull/1) |
-| P1-5 | حزمة npm | 🟡 الحزمة جاهزة ومجرّبة، النشر مؤجّل (يحتاج حسابك) — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3) |
+| P1-5 | حزمة npm | ✅ منشورة `logo-vectorizer@1.1.0`؛ باقي ربط Trusted Publisher للإصدارات الجاية — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3) |
 | P2-1 | التحكم بنعومة المسارات | ✅ منفّذ كإعداد «الزوايا» — [#1](https://github.com/Mulhamx4/logo-vectorize/pull/1) |
 | P2-2 | معاينة حية أثناء تعديل الإعدادات | ⏸️ مؤجّل، يحتاج قرار تصميم — [#5](https://github.com/Mulhamx4/logo-vectorize/issues/5) |
 | P2-3 | الربط مع Brand Kit Builder وصفحة الخطوط | ⏸️ مؤجّل، تعديل منتجين ثانيين — [#4](https://github.com/Mulhamx4/logo-vectorize/issues/4) |
@@ -60,9 +60,10 @@
 **اللي انعمل:** `checkout@v7` و`setup-python@v7` و`configure-pages@v6` و`upload-pages-artifact@v5` و`deploy-pages@v5`.
 **الجهد:** XS
 
-### P1-5: حزمة npm 🟡
+### P1-5: حزمة npm ✅
 **اللي انعمل:** `package.json` لحزمة `logo-vectorizer` (الاسم متاح)، فيها `site/lib/` فقط. تجربة فعلية: ثبّتها من ملف الحزمة داخل مشروع Vite 8.3 + React 19.3 + TypeScript 6.0.3؛ نجح `tsc` و`vite build` وخادم التطوير، واشتغل تتبع عدة شعارات وتصدير PDF وزر المضيف. التوثيق في INTEGRATION.md.
-**ليش النشر مؤجّل:** يحتاج حساب npm خاص بك — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3).
+**النشر:** [`logo-vectorizer@1.1.0`](https://www.npmjs.com/package/logo-vectorizer) انتشر في 2026-09-17 من حساب `mulhamx4`. بصمته مطابقة للنسخة المختبرة، وثُبّت من سجل npm واشتغل في مشروع Vite.
+**المتبقي:** ربط Trusted Publisher على npmjs.com (مرة وحدة)، وبعدها أي إصدار جديد ينتشر من `publish.yml` عند نشر GitHub Release — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3).
 **الجهد المتبقي:** XS
 
 ---

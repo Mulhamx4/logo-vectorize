@@ -4,6 +4,7 @@ English · **[العربية ↓](#logo-vectorize-عربي)**
 
 [![test and deploy](https://github.com/Mulhamx4/logo-vectorize/actions/workflows/pages.yml/badge.svg)](https://github.com/Mulhamx4/logo-vectorize/actions/workflows/pages.yml)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/logo-vectorizer.svg)](https://www.npmjs.com/package/logo-vectorizer)
 
 Turn a flat-color raster logo (PNG, JPG, WebP) into clean layered vectors and a ready-to-send logo pack: **SVG, PDF, EPS and PNG** in every useful color variant.
 
@@ -58,7 +59,7 @@ Every change is tested in Chromium, Firefox and WebKit (Playwright, on Linux). R
 
 ## Use the web tool elsewhere
 
-The tool is a set of plain ES modules with no build step. Embed it as an element, mount the UI, or call the core directly — see **[INTEGRATION.md](INTEGRATION.md)** for Brand Kit Builder (React + Vite) and the Arabic font merge page. `package.json` is ready for an npm package named `logo-vectorizer`. It is not published yet; until it is, copy `site/lib/`.
+The tool is a set of plain ES modules with no build step. Embed it as an element, mount the UI, or call the core directly — see **[INTEGRATION.md](INTEGRATION.md)** for Brand Kit Builder (React + Vite) and the Arabic font merge page. It is also on npm as [`logo-vectorizer`](https://www.npmjs.com/package/logo-vectorizer): `npm install logo-vectorizer` (with Vite, add the `optimizeDeps.exclude` line from INTEGRATION.md).
 
 ```html
 <script type="module" src="/logo-vectorize/lib/logo-vectorizer.js"></script>
@@ -163,7 +164,7 @@ GPL-2.0-or-later, because the tracer is [Potrace](https://potrace.sourceforge.ne
 
 ## استخدام أداة الويب في مكان ثاني
 
-الأداة عبارة عن وحدات ES عادية بدون أي خطوة بناء (build). تقدر تضمّنها كعنصر HTML، أو تركّب الواجهة بنفسك، أو تستدعي المحرك مباشرة — راجع **[INTEGRATION.md](INTEGRATION.md)** لتفاصيل الدمج في Brand Kit Builder (React + Vite) وصفحة دمج الخطوط العربية. ملف `package.json` جاهز لحزمة npm باسم `logo-vectorizer`، لكنها ما انتشرت بعد؛ لين تنتشر انسخ مجلد `site/lib/`.
+الأداة عبارة عن وحدات ES عادية بدون أي خطوة بناء (build). تقدر تضمّنها كعنصر HTML، أو تركّب الواجهة بنفسك، أو تستدعي المحرك مباشرة — راجع **[INTEGRATION.md](INTEGRATION.md)** لتفاصيل الدمج في Brand Kit Builder (React + Vite) وصفحة دمج الخطوط العربية. والأداة منشورة كذلك على npm باسم [`logo-vectorizer`](https://www.npmjs.com/package/logo-vectorizer): `npm install logo-vectorizer` (مع Vite أضف سطر `optimizeDeps.exclude` من INTEGRATION.md).
 
 ```html
 <script type="module" src="/logo-vectorize/lib/logo-vectorizer.js"></script>
