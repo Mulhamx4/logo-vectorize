@@ -17,7 +17,7 @@ Last updated: 2026-09-17 · Mode of last change: EXECUTE
 
 All web dependencies are vendored in `site/lib/vendor/` — no install, no build step.
 Runtime: evergreen Chrome/Edge, Firefox, Safari 16.4+ (module workers, OffscreenCanvas, IndexedDB optional). Deploy: GitHub Pages from `site/` via `.github/workflows/pages.yml`, after e2e passes in all three engines.
-npm: `package.json` defines `logo-vectorizer` (site/lib only). Packed and installed into Vite 8.3 + React 19.3 + TS 6.0.3 on 2026-09-17; not published (#3).
+npm: `logo-vectorizer@1.1.0` published 2026-09-17 by mulhamx4 (site/lib only; shasum matches the tested pack). Installed from the registry into Vite 8.3 + React 19.3 + TS 6.0.3 and traced/exported in Chromium. Later versions: `.github/workflows/publish.yml` on a GitHub release (trusted publishing, #3).
 
 ## [SYSTEM_FLOW]
 
@@ -63,6 +63,7 @@ tests/e2e.py                  — Playwright checks per engine (arg: chromium|fi
                                 generates tall/wide/large PNGs at run time
 tests/vendor/axe.min.js       — axe-core for the a11y checks
 package.json                  — npm package definition (exports site/lib); not used by the site itself
+.github/workflows/publish.yml — npm publish on GitHub release, tag must be v<version>, OIDC trusted publishing
 ```
 
 **State ownership:** `ui.js` holds all UI state; `worker.js` is stateless per job; `session.js` persists only when the host passes `persist` (standalone page does); the standalone page also stores `lv-lang` / `lv-theme` in localStorage.
@@ -90,14 +91,14 @@ package.json                  — npm package definition (exports site/lib); not
 | GOAL-16 | No WCAG 2.2 A/AA violations on upload, review (en/ar/dark), resume and batch screens | e2e axe checks | verified 3 engines |
 | GOAL-17 | Full e2e passes in Chromium, Firefox and WebKit | CI matrix | verified (PR #1) |
 | GOAL-18 | Original and vector share one box and overlay within 2 px on tall, wide, 4200 px and phone-width sources | e2e `stage_fits` | verified 3 engines |
-| GOAL-19 | Installed as an npm package in Vite + React + TS: type-checks, builds, dev server works, traces and exports | packed tarball in a scratch Vite 8.3 app, Chromium | verified 2026-09-17 (manual, not in CI) |
+| GOAL-19 | Installed as an npm package in Vite + React + TS: type-checks, builds, dev server works, traces and exports | packed tarball, then `logo-vectorizer@1.1.0` from the registry, in a scratch Vite 8.3 app, Chromium | verified 2026-09-17 (manual, not in CI) |
 
 ## [ORPHANS_AND_PENDING]
 
 | Item | Why it's here | Blocking? |
 | --- | --- | --- |
 | GOAL-12 real-device check | needs physical devices — [#2](https://github.com/Mulhamx4/logo-vectorize/issues/2) | no |
-| npm publish | needs the owner's npm account — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3) | no |
+| npm Trusted Publisher | one-time setup on npmjs.com so releases publish from publish.yml — [#3](https://github.com/Mulhamx4/logo-vectorize/issues/3) | no |
 | Brand Kit + font page wiring | other repos, placement decisions — [#4](https://github.com/Mulhamx4/logo-vectorize/issues/4) | no |
 | Live preview while editing | design decision — [#5](https://github.com/Mulhamx4/logo-vectorize/issues/5) | no |
 | Share a result | conflicts with the privacy promise — [#6](https://github.com/Mulhamx4/logo-vectorize/issues/6) | no |
